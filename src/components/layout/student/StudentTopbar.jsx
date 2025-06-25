@@ -17,7 +17,7 @@ const StudentTopbar = ({ setSidebarOpen }) => {
           },
         });
         const data = await res.json();
-        console.log(data.data);
+        // console.log(data.data);
         if (data.success) {
           setUserData(data.data);
         } else {
@@ -43,7 +43,7 @@ const StudentTopbar = ({ setSidebarOpen }) => {
         <Menu size={24} />
       </button>
 
-      <h1 className=" text:md sm:text-lg font-semibold text-gray-800">Welcome, {UserData.name}</h1>
+      <h1 className=" text:md sm:text-lg font-semibold text-gray-800">{UserData.name}</h1>
       <button className="text-sm text-red-600 hover:underline">Logout</button>
     </header>
   );
