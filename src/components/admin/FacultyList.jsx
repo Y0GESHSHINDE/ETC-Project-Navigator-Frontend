@@ -42,10 +42,11 @@ const FacultyList = () => {
     try {
       setModalLoading(true);
       const enrichedGroups = [];
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
       for (const groupId of faculty.assignedGroups || []) {
         const res = await fetch(
-          `http://localhost:5000/api/admin/group/${groupId}`,
+          `${apiBaseUrl}api/admin/group/${groupId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -11,11 +11,12 @@ const StudentList = () => {
   const [projectInfo, setProjectInfo] = useState(null);
   const [buttonLoadingId, setButtonLoadingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // <-- search state
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/all-students");
+        const res = await fetch(`${apiBaseUrl}/api/admin/all-students`);
         if (!res.ok) throw new Error("Network response was not ok");
         const data = await res.json();
         setStudents(data.data);

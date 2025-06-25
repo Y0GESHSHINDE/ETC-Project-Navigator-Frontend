@@ -1,8 +1,9 @@
 import React from "react";
 import { X, LayoutDashboard, Users, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
+import { createRoot } from 'react-dom/client';
 
-const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
+const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <>
       {/* Mobile Sidebar */}
@@ -17,7 +18,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative lg:block`}>
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-bold text-gray-800">Admin Panel</h2>
+          <h2 className="text-lg font-bold text-gray-800">Faculty Panel</h2>
           <button
             className="lg:hidden text-gray-600"
             onClick={() => setSidebarOpen(false)}>
@@ -27,45 +28,45 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
         <nav className="p-4 space-y-4">
           <Link
-            to="/admin"
+            to="/faculty"
             className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
             onClick={() => setSidebarOpen(false)}>
             <LayoutDashboard size={20} /> Dashboard
           </Link>
 
           <Link
-            to="/admin/faculty-list"
+            to="/faculty/get-my-grops"
             className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
             onClick={() => setSidebarOpen(false)}>
-            <Users size={20} /> Faculty List
+            <Users size={20} /> My Groups
           </Link>
 
           <Link
-            to="/admin/student-list"
-            className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
-            onClick={() => setSidebarOpen(false)}>
-            <Users size={20} /> Student List
-          </Link>
-
-          <Link
-            to="/admin/project-groups"
+            to="/faculty/project-groups"
             className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
             onClick={() => setSidebarOpen(false)}>
             <Users size={20} /> Project Groups
           </Link>
 
           <Link
-            to="/admin/add-faculty"
+            to="/faculty/student-list"
             className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
             onClick={() => setSidebarOpen(false)}>
-            <Users size={20} /> Add Faculty
+            <Users size={20} /> Student List
           </Link>
 
           <Link
-            to="/admin/add-student"
+            to="/faculty/add-student"
             className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
             onClick={() => setSidebarOpen(false)}>
             <Users size={20} /> Add Student
+          </Link>
+
+          <Link
+            to="/faculty/createGroup"
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+            onClick={() => setSidebarOpen(false)}>
+            <Users size={20} /> Create Project Group
           </Link>
 
           <button className="flex items-center gap-2 text-red-500 hover:underline mt-4">
@@ -77,4 +78,4 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   );
 };
 
-export default AdminSidebar;
+export default FacultySidebar;
