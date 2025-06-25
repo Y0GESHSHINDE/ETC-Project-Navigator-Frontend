@@ -19,6 +19,7 @@ import FacultyProjectGroups from "./components/faculty/FaculutyProjectGroups";
 import CreateProjectGroup from "./components/admin/CreateProjectGroup";
 import StudentLayout from "./components/layout/student/StudentLayout";
 import ProjectGroup from './components/student/ProjectGroup';
+import StudentProfile from "./components/student/StudentProfile";
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
           {/* Nested routes inside admin */}
           <Route index element={<StudentDashboard />} />
           <Route path="project" element={<ProjectGroup />} />
+          <Route path="profile" element={<StudentProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>

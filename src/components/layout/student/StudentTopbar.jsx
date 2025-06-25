@@ -34,6 +34,11 @@ const StudentTopbar = ({ setSidebarOpen }) => {
     fetchUserData();
   }, [apiBaseUrl, token]);
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login"; 
+  };
+
   return (
     <header className="bg-white shadow-md p-4 flex items-center justify-between">
       {/* Hamburger for mobile */}
@@ -44,7 +49,7 @@ const StudentTopbar = ({ setSidebarOpen }) => {
       </button>
 
       <h1 className=" text:md sm:text-lg font-semibold text-gray-800">{UserData.name}</h1>
-      <button className="text-sm text-red-600 hover:underline">Logout</button>
+      <button className="text-sm text-red-600 hover:underline hover:text-red-600 cursor-pointer" onClick={logout}>Logout</button>
     </header>
   );
 };

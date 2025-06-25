@@ -3,6 +3,10 @@ import { X, LayoutDashboard, Users, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
+    const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login"; 
+  };
   return (
     <>
       {/* Mobile Sidebar */}
@@ -68,7 +72,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <Users size={20} /> Add Student
           </Link>
 
-          <button className="flex items-center gap-2 text-red-500 hover:underline mt-4">
+          <button className="flex items-center gap-2 text-red-500 hover:underline mt-4 cursor-pointer" onClick={logout}>
             <LogOut size={20} /> Logout
           </button>
         </nav>

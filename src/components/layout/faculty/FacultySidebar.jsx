@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
 
 const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
+    const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login"; 
+  };
   return (
     <>
       {/* Mobile Sidebar */}
@@ -69,7 +73,7 @@ const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <Users size={20} /> Create Project Group
           </Link>
 
-          <button className="flex items-center gap-2 text-red-500 hover:underline mt-4">
+          <button className="flex items-center gap-2 text-red-500 hover:underline mt-4 cursor-pointer " onClick={logout} >
             <LogOut size={20} /> Logout
           </button>
         </nav>
