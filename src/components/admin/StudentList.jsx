@@ -9,7 +9,8 @@ const StudentList = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [projectInfo, setProjectInfo] = useState(null);
-  const [buttonLoadingId, setButtonLoadingId] = useState(null); // Track which button is loading
+  const [buttonLoadingId, setButtonLoadingId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // <-- search state
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -40,8 +41,6 @@ const StudentList = () => {
   };
 
   const handleProjectInfo = async (groupId, studentName) => {
-    console.log("Fetching project info for group:", groupId);
-
     const token = localStorage.getItem("token");
 
     if (!groupId) {
@@ -62,22 +61,21 @@ const StudentList = () => {
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ fixed formatting
-            "Content-Type": "application/json", // optional, but good to include
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
       if (!res.ok) {
-        const errorMsg = await res.text(); // log error body if needed
+        const errorMsg = await res.text();
         console.error("API Error Response:", errorMsg);
         throw new Error("Failed to fetch project info");
       }
 
       const data = await res.json();
-      setProjectInfo(data); // Store project details
-      console.log("Project Info:", projectInfo);
-      setSelectedStudent({ name: studentName }); // For modal title
+      setProjectInfo(data);
+      setSelectedStudent({ name: studentName });
       setModalOpen(true);
     } catch (err) {
       console.error("Error fetching project info:", err);
@@ -87,12 +85,33 @@ const StudentList = () => {
     }
   };
 
+  // Filter students based on search query (case-insensitive)
+  const filteredStudents = students.filter((student) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      student.name.toLowerCase().includes(query) ||
+      (student.rollNo && student.rollNo.toLowerCase().includes(query)) ||
+      student.email.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="max-w-6xl mx-auto mt-10 px-4">
       <ToastContainer />
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+      <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">
         Student List
       </h2>
+
+      {/* Search Input */}
+      <div className="mb-6 max-w-md mx-auto">
+        <input
+          type="text"
+          placeholder="Search by name, roll no, or email"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
 
       {loading ? (
         <div className="text-center py-8">
@@ -102,14 +121,15 @@ const StudentList = () => {
           />
           <p className="mt-2 text-gray-600">Loading students...</p>
         </div>
-      ) : students.length === 0 ? (
+      ) : filteredStudents.length === 0 ? (
         <p className="text-gray-500 text-center">No students found.</p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {students.map((student) => (
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+          {filteredStudents.map((student) => (
             <div
               key={student._id}
-              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-200 overflow-hidden flex flex-col md:flex-row p-4 gap-4">
+              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-200 overflow-hidden flex flex-col md:flex-row p-4 gap-4"
+            >
               <div className="flex justify-center md:justify-start">
                 <img
                   src={
@@ -149,10 +169,9 @@ const StudentList = () => {
                     buttonLoadingId === student._id || !student.groupId
                       ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                       : "border-green-500 text-green-600 hover:bg-green-600 hover:text-white"
-                  }`}>
-                  {buttonLoadingId === student._id
-                    ? "Loading..."
-                    : "Project Info"}
+                  }`}
+                >
+                  {buttonLoadingId === student._id ? "Loading..." : "Project Info"}
                 </button>
               </div>
             </div>
@@ -164,14 +183,17 @@ const StudentList = () => {
       {modalOpen && selectedStudent && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center px-4 py-6"
-          onClick={closeModal}>
+          onClick={closeModal}
+        >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-xl shadow-xl w-full max-w-xl p-6 sm:p-8 relative animate-fadeIn">
+            className="bg-white rounded-xl shadow-xl w-full max-w-xl p-6 sm:p-8 relative animate-fadeIn"
+          >
             <button
               onClick={closeModal}
               className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition"
-              aria-label="Close modal">
+              aria-label="Close modal"
+            >
               <X size={24} />
             </button>
 
@@ -183,28 +205,19 @@ const StudentList = () => {
               <div className="space-y-6 text-sm text-gray-800">
                 {/* Title & Description */}
                 <div className="bg-gray-50 p-4 rounded-md shadow-inner space-y-2">
-                  <p className="text-base font-semibold text-blue-700">
-                    📌 Title
-                  </p>
-                  <p className="text-gray-900">
-                    {projectInfo.data.projectTitle}
-                  </p>
+                  <p className="text-base font-semibold text-blue-700">📌 Title</p>
+                  <p className="text-gray-900">{projectInfo.data.projectTitle}</p>
 
-                  <p className="mt-3 text-base font-semibold text-blue-700">
-                    📝 Description
-                  </p>
+                  <p className="mt-3 text-base font-semibold text-blue-700">📝 Description</p>
                   <p className="text-gray-700">
-                    {projectInfo.data.description ||
-                      "No description available."}
+                    {projectInfo.data.description || "No description available."}
                   </p>
                 </div>
 
                 {/* Tech, Domain, Year */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-blue-50 p-4 rounded-md">
-                    <p className="text-blue-700 font-medium">
-                      🧪 Technology Stack
-                    </p>
+                    <p className="text-blue-700 font-medium">🧪 Technology Stack</p>
                     <ul className="list-disc list-inside mt-1 space-y-1 text-blue-900 text-sm">
                       {projectInfo.data.technologyStack?.length > 0 ? (
                         projectInfo.data.technologyStack.map((tech, index) => (
@@ -218,22 +231,16 @@ const StudentList = () => {
 
                   <div className="bg-green-50 p-4 rounded-md space-y-2">
                     <p className="text-green-700 font-medium">📚 Domain</p>
-                    <p className="text-green-900">
-                      {projectInfo.data.domain || "N/A"}
-                    </p>
+                    <p className="text-green-900">{projectInfo.data.domain || "N/A"}</p>
 
                     <p className="text-green-700 font-medium mt-2">📅 Year</p>
-                    <p className="text-green-900">
-                      {projectInfo.data.year || "N/A"}
-                    </p>
+                    <p className="text-green-900">{projectInfo.data.year || "N/A"}</p>
                   </div>
                 </div>
 
                 {/* Guide Info */}
                 <div className="bg-yellow-50 p-4 rounded-md space-y-2 border-l-4 border-yellow-400">
-                  <p className="text-yellow-700 font-semibold">
-                    👨‍🏫 Guide Information
-                  </p>
+                  <p className="text-yellow-700 font-semibold">👨‍🏫 Guide Information</p>
                   {projectInfo.data.guideId ? (
                     <div className="text-yellow-900 text-sm pl-2">
                       <p>
@@ -243,8 +250,7 @@ const StudentList = () => {
                         <strong>Email:</strong> {projectInfo.data.guideId.email}
                       </p>
                       <p>
-                        <strong>Department:</strong>{" "}
-                        {projectInfo.data.guideId.department}
+                        <strong>Department:</strong> {projectInfo.data.guideId.department}
                       </p>
                     </div>
                   ) : (
@@ -255,20 +261,15 @@ const StudentList = () => {
                 {/* Metadata */}
                 <div className="text-right text-xs text-gray-500 mt-4">
                   Created on:{" "}
-                  {new Date(projectInfo.data.createdAt).toLocaleDateString(
-                    undefined,
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }
-                  )}
+                  {new Date(projectInfo.data.createdAt).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
                 </div>
               </div>
             ) : (
-              <p className="text-gray-500 text-center text-sm">
-                No project info found.
-              </p>
+              <p className="text-gray-500 text-center text-sm">No project info found.</p>
             )}
           </div>
         </div>
