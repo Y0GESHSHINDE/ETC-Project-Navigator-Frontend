@@ -72,6 +72,13 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <Users size={20} /> Add Student
           </Link>
 
+          <Link
+            to="/admin/profile"
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+            onClick={() => setSidebarOpen(false)}>
+            <Users size={20} /> Profile
+          </Link>
+
           <button className="flex items-center gap-2 text-red-500 hover:underline mt-4 cursor-pointer" onClick={logout}>
             <LogOut size={20} /> Logout
           </button>

@@ -20,6 +20,7 @@ import CreateProjectGroup from "./components/admin/CreateProjectGroup";
 import StudentLayout from "./components/layout/student/StudentLayout";
 import ProjectGroup from './components/student/ProjectGroup';
 import StudentProfile from "./components/student/StudentProfile";
+import AdminProfile from "./components/admin/AdminProfile";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="faculty-list" element={<FacultyList />} />
           <Route path="student-list" element={<StudentList />} />
           <Route path="project-groups" element={<ProjectGroups />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
 
         <Route
