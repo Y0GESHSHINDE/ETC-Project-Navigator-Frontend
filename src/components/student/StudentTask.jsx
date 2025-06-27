@@ -18,11 +18,11 @@ const StudentTask = () => {
   const [uploadingTaskId, setUploadingTaskId] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState({});
   const token = localStorage.getItem("token");
-
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const fetchGroupData = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/student/get-my-group",
+        `${apiBaseUrl}/api/student/get-my-group`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setGroupData(res.data.data);
@@ -34,7 +34,7 @@ const StudentTask = () => {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/student/get-all-task/",
+        `${apiBaseUrl}/api/student/get-all-task/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTasks(res.data.tasks);
@@ -70,7 +70,7 @@ const StudentTask = () => {
     setUploadingTaskId(taskId);
     try {
       await axios.post(
-        `http://localhost:5000/api/student/submission/${groupData._id}/tasks/${taskId}`,
+        `${apiBaseUrl}/api/student/submission/${groupData._id}/tasks/${taskId}`,
         formData,
         {
           headers: {

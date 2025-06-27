@@ -13,7 +13,7 @@ function AdminProfile() {
     department: '',
     profileImage: ''
   })
-
+   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; 
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
@@ -22,7 +22,7 @@ function AdminProfile() {
           throw new Error('Authentication required')
         }
 
-        const response = await fetch('http://localhost:5000/api/admin/get-admin', {
+        const response = await fetch(`${apiBaseUrl}/api/admin/get-admin`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -69,7 +69,7 @@ function AdminProfile() {
         throw new Error('Authentication required')
       }
 
-      const response = await fetch('http://localhost:5000/api/admin/update-admin', {
+      const response = await fetch(`${apiBaseUrl}/api/admin/update-admin`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

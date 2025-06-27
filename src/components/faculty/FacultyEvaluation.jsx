@@ -22,12 +22,12 @@ const FacultyEvaluation = () => {
   const [submittingTasks, setSubmittingTasks] = useState({});
 
   const token = localStorage.getItem("token");
-
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const fetchGroups = async () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        "http://localhost:5000/api/faculty/get-my-groups",
+        `${apiBaseUrl}/api/faculty/get-my-groups`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -59,7 +59,7 @@ const FacultyEvaluation = () => {
   const fetchTaskDetails = async (taskId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/faculty/get-task-info/${taskId}`,
+        `${apiBaseUrl}/api/faculty/get-task-info/${taskId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -145,7 +145,7 @@ const FacultyEvaluation = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/faculty/evaluate/project-groups/${groupId}/tasks/${taskId}`,
+        `${apiBaseUrl}/api/faculty/evaluate/project-groups/${groupId}/tasks/${taskId}`,
         {
           status,
           teacherRemark,

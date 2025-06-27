@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children, role }) => {
   const [authorized, setAuthorized] = useState(false);
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  // console.log("API Base URL:", apiBaseUrl); // Should be something like http://localhost:5000
+
 
 
 

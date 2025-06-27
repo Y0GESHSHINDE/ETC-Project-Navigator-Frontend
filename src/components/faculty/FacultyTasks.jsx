@@ -12,11 +12,11 @@ const FacultyTasks = () => {
   const [loadingTaskId, setLoadingTaskId] = useState(null);
 
   const token = localStorage.getItem("token");
-
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   // ✅ Fetch all tasks
   const fetchTasks = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/faculty/get-all-task/", {
+      const res = await fetch(`${apiBaseUrl}/api/faculty/get-all-task/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -39,7 +39,7 @@ const FacultyTasks = () => {
   // ✅ Fetch faculty groups
   const fetchGroups = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/faculty/get-my-groups", {
+      const res = await fetch(`${apiBaseUrl}/api/faculty/get-my-groups`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -69,7 +69,7 @@ const FacultyTasks = () => {
     setLoadingTaskId(taskId);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/faculty/group/${selectedGroup.value}/task/${taskId}/activate`,
+        `${apiBaseUrl}/api/faculty/group/${selectedGroup.value}/task/${taskId}/activate`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },
@@ -98,7 +98,7 @@ const FacultyTasks = () => {
 setLoadingTaskId(taskId);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/faculty/group/${selectedGroup.value}/task/${taskId}/deactivate`,
+        `${apiBaseUrl}/api/faculty/group/${selectedGroup.value}/task/${taskId}/deactivate`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },
