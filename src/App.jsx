@@ -18,9 +18,12 @@ import FacultyLayout from "./components/layout/faculty/FacultyLayout";
 import FacultyProjectGroups from "./components/faculty/FaculutyProjectGroups";
 import CreateProjectGroup from "./components/admin/CreateProjectGroup";
 import StudentLayout from "./components/layout/student/StudentLayout";
-import ProjectGroup from './components/student/ProjectGroup';
+import ProjectGroup from "./components/student/ProjectGroup";
 import StudentProfile from "./components/student/StudentProfile";
 import AdminProfile from "./components/admin/AdminProfile";
+import FacultyProfile from './components/faculty/FacultyProfile';
+import FacultyTasks from "./components/faculty/FacultyTasks";
+import FacultyEvaluation from "./components/faculty/FacultyEvaluation";
 
 function App() {
   return (
@@ -61,6 +64,9 @@ function App() {
           <Route path="get-my-grops" element={<FacultyProjectGroups />} />
           <Route path="project-groups" element={<ProjectGroups />} />
           <Route path="createGroup" element={<CreateProjectGroup />} />
+          <Route path="profile" element={<FacultyProfile />} />
+          <Route path="task" element={<FacultyTasks/>}/>
+          <Route path="evaluation" element={<FacultyEvaluation/>}/>
         </Route>
 
         <Route

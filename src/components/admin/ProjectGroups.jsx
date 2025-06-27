@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -55,38 +55,44 @@ function ProjectGroups() {
     setSelectedGroup(null);
   };
 
+  // console.log(groups);
+
   return (
-    <div className="max-w-6xl mx-auto mt-10 px-4">
+    <div className="max-w-6xl mx-auto  p-4">
       <ToastContainer />
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+      <h2 className="text-2xl font-bold mb-6">
         All Project Groups
       </h2>
 
       {/* Search Input */}
-      <div className="mb-6 max-w-md mx-auto">
+      <div className="mb-6 ">
         <input
           type="text"
           placeholder="Search by project title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full max-w-md p-2 border rounded"
         />
       </div>
 
       {loading ? (
         <div className="text-center py-10">
-          <LoaderCircle className="animate-spin mx-auto text-blue-600" size={32} />
+          <LoaderCircle
+            className="animate-spin mx-auto text-blue-600"
+            size={32}
+          />
           <p className="mt-2 text-gray-600">Loading groups...</p>
         </div>
       ) : filteredGroups.length === 0 ? (
-        <p className="text-center text-gray-500">No matching project groups found.</p>
+        <p className="text-center text-gray-500">
+          No matching project groups found.
+        </p>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2  lg:grid-cols-3 ">
           {filteredGroups.map((group) => (
             <div
               key={group._id}
-              className="bg-white border rounded-lg shadow-sm p-5 flex flex-col justify-between"
-            >
+              className="bg-white border  rounded-lg shadow-sm p-4 flex flex-col justify-between">
               <div>
                 <h3 className="text-xl font-semibold text-gray-800">
                   {group.projectTitle}
@@ -94,14 +100,36 @@ function ProjectGroups() {
                 <p className="text-sm text-gray-600 mt-1 line-clamp-3">
                   {group.description || "No description provided."}
                 </p>
+
+                <div>
+                  <h3 className="font-semibold mt-2">Guide</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-3 p-2 border rounded">
+                      <img
+                        src={
+                          group.guideId.profileImage ||
+                          `https://ui-avatars.com/api/?name=${group.guideId.name}&background=random`
+                        }
+                        alt={group.guideId.name}
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div>
+                        <p>{group.guideId.name}</p>
+                        <p className="text-sm text-gray-600">
+                          {group.guideId.email}
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
                 <button
                   onClick={() => openModal(group)}
-                  className="mt-4 border border-blue-500 text-blue-600 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-md text-sm font-medium transition"
-                >
+                  className="mt-4 border border-blue-500 text-blue-600 hover:bg-blue-600 hover:text-white px-3 py-1 rounded-md text-sm w-full font-medium transition">
                   View Details
                 </button>
               </div>
-              <div className="pt-4 mt-6 border-t text-right text-xs text-gray-500">
+              <div className="pt-4  text-right text-xs text-gray-500">
                 Created on:{" "}
                 {new Date(group.createdAt).toLocaleDateString("en-IN", {
                   year: "numeric",
@@ -116,119 +144,102 @@ function ProjectGroups() {
 
       {/* Modal */}
       {modalOpen && selectedGroup && (
-        <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center px-4 py-6"
-          onClick={closeModal}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-xl shadow-lg w-full sm:w-[50%] max-w-5xl p-6 relative overflow-y-auto max-h-[90vh]"
-          >
-            <button
-              onClick={closeModal}
-              className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition text-xl"
-              aria-label="Close modal"
-            >
-              ×
-            </button>
-
-            <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">
-              {selectedGroup.projectTitle}
-            </h3>
-
-            <p className="text-sm text-gray-600 mb-4">
-              {selectedGroup.description || "No description provided."}
-            </p>
-
-            <div className="mb-4">
-              <p className="text-sm font-medium text-gray-700 mb-1">Technology Stack</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedGroup.technologyStack?.length > 0 ? (
-                  selectedGroup.technologyStack.map((tech, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-md"
-                    >
-                      {tech}
-                    </span>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">Not specified</p>
-                )}
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold">
+                  {selectedGroup.projectTitle}
+                </h2>
+                <button
+                  onClick={closeModal}
+                  className="text-gray-500 hover:text-gray-700">
+                  <X size={24} />
+                </button>
               </div>
-            </div>
 
-            <div className="flex flex-wrap gap-4 mb-4 text-sm">
-              <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
-                Domain: {selectedGroup.domain || "N/A"}
-              </div>
-              <div className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full">
-                Year: {selectedGroup.year || "N/A"}
-              </div>
-            </div>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium">Description</h3>
+                  <p>{selectedGroup.description || "No description"}</p>
+                </div>
 
-            {selectedGroup.members?.length > 0 && (
-              <div className="mb-4 bg-gray-50 p-3 rounded-md border-l-4 border-indigo-400">
-                <p className="text-indigo-700 font-semibold mb-2">Members</p>
-                <ul className="space-y-2 text-sm text-indigo-900">
-                  {selectedGroup.members.map((member) => (
-                    <li
-                      key={member._id}
-                      className="flex gap-3 items-start border border-gray-200 p-2 rounded-md bg-white shadow-sm"
-                    >
+                <div>
+                  <h3 className="font-medium">Technologies</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedGroup.technologyStack?.map((tech) => (
+                      <span
+                        key={tech}
+                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-medium">Domain</h3>
+                    <p>{selectedGroup.domain || "Not specified"}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Year</h3>
+                    <p>{selectedGroup.year || "Not specified"}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-medium">Members</h3>
+                  {selectedGroup.members?.length > 0 ? (
+                    <ul className="space-y-2">
+                      {selectedGroup.members.map((member) => (
+                        <li
+                          key={member._id}
+                          className="flex items-center gap-3 p-2 border rounded">
+                          <img
+                            src={
+                              member.profileImage ||
+                              `https://ui-avatars.com/api/?name=${member.name}&background=random`
+                            }
+                            alt={member.name}
+                            className="w-10 h-10 rounded-full"
+                          />
+                          <div>
+                            <p>{member.name}</p>
+                            <p className="text-sm text-gray-600">
+                              {member.email}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No members</p>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="font-medium">Guide</h3>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-3 p-2 border rounded">
                       <img
                         src={
-                          member.profileImage ||
-                          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                            member.name
-                          )}&background=random`
+                          selectedGroup.guideId.profileImage ||
+                          `https://ui-avatars.com/api/?name=${selectedGroup.guideId.name}&background=random`
                         }
-                        alt={member.name}
-                        className="w-10 h-10 rounded-full object-cover border"
+                        alt={selectedGroup.guideId.name}
+                        className="w-10 h-10 rounded-full"
                       />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium">{member.name}</p>
-                        <p className="text-xs text-gray-600 break-words">
-                          <strong>Email:</strong> {member.email}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          <strong>Roll No:</strong> {member.rollNo || "N/A"}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          <strong>Dept:</strong> {member.department}
+                      <div>
+                        <p>{selectedGroup.guideId.name}</p>
+                        <p className="text-sm text-gray-600">
+                          {selectedGroup.guideId.email}
                         </p>
                       </div>
                     </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {selectedGroup.guideId && (
-              <div className="bg-yellow-50 p-3 rounded-md border-l-4 border-yellow-400 text-sm">
-                <p className="text-yellow-800 font-semibold mb-1">Guide</p>
-                <div className="space-y-1 text-yellow-900">
-                  <p>
-                    <strong>Name:</strong> {selectedGroup.guideId.name}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {selectedGroup.guideId.email}
-                  </p>
-                  <p>
-                    <strong>Department:</strong>{" "}
-                    {selectedGroup.guideId.department || "N/A"}
-                  </p>
+                  </ul>
                 </div>
               </div>
-            )}
-
-            <div className="pt-4 mt-6 border-t text-right text-xs text-gray-500">
-              Created on:{" "}
-              {new Date(selectedGroup.createdAt).toLocaleDateString("en-IN", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
             </div>
           </div>
         </div>

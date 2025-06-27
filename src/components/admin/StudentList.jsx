@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Mail, LoaderCircle, X, Edit, Trash2, Users ,BookOpen ,Calendar } from "lucide-react";
+import {
+  Mail,
+  LoaderCircle,
+  X,
+  Edit,
+  Trash2,
+  Users,
+  BookOpen,
+  Calendar,
+} from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -210,20 +219,18 @@ const StudentList = () => {
   });
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 px-4">
+    <div className="max-w-6xl mx-auto p-4">
       <ToastContainer />
-      <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">
-        Student List
-      </h2>
+      <h2 className="text-2xl font-bold mb-6">Student List</h2>
 
       {/* Search Input */}
-      <div className="mb-6 max-w-md mx-auto">
+      <div className="mb-6 ">
         <input
           type="text"
           placeholder="Search by name, roll no, or email"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full max-w-md p-2 border rounded"
         />
       </div>
 

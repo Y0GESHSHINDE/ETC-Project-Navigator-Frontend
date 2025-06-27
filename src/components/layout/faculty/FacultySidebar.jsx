@@ -1,13 +1,22 @@
-import React from "react";
-import { X, LayoutDashboard, Users, LogOut } from "lucide-react";
+import React, { useState } from "react";
+import {
+  X,
+  LayoutDashboard,
+  Users,
+  LogOut,
+  ChevronDown,
+  ChevronUp,
+  FileCheck,
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import { createRoot } from 'react-dom/client';
 
 const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
-    const logout = () => {
+  const [isProjectGroupsOpen, setIsProjectGroupsOpen] = useState(false);
+  const logout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login"; 
+    window.location.href = "/login";
   };
+
   return (
     <>
       {/* Mobile Sidebar */}
@@ -38,19 +47,53 @@ const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <LayoutDashboard size={20} /> Dashboard
           </Link>
 
-          <Link
-            to="/faculty/get-my-grops"
-            className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
-            onClick={() => setSidebarOpen(false)}>
-            <Users size={20} /> My Groups
-          </Link>
+          {/* Project Groups Dropdown */}
+          <div className="space-y-2">
+            <button
+              className="flex items-center justify-between w-full text-gray-700 hover:text-blue-600"
+              onClick={() => setIsProjectGroupsOpen(!isProjectGroupsOpen)}>
+              <div className="flex items-center gap-2">
+                <Users size={20} /> Project
+              </div>
+              {isProjectGroupsOpen ? (
+                <ChevronUp size={18} />
+              ) : (
+                <ChevronDown size={18} />
+              )}
+            </button>
 
-          <Link
-            to="/faculty/project-groups"
-            className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
-            onClick={() => setSidebarOpen(false)}>
-            <Users size={20} /> Project Groups
-          </Link>
+            {isProjectGroupsOpen && (
+              <div className="pl-8 space-y-3">
+                <Link
+                  to="/faculty/get-my-grops"
+                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={() => setSidebarOpen(false)}>
+                  <Users size={20} /> My Groups
+                </Link>
+
+                <Link
+                  to="/faculty/project-groups"
+                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={() => setSidebarOpen(false)}>
+                  <Users size={20} /> All Groups
+                </Link>
+
+                <Link
+                  to="/faculty/task"
+                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={() => setSidebarOpen(false)}>
+                  <FileCheck  size={20} /> Task
+                </Link>
+
+                <Link
+                  to="/faculty/evaluation"
+                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+                  onClick={() => setSidebarOpen(false)}>
+                  <FileCheck  size={20} /> Task Evaluation
+                </Link>
+              </div>
+            )}
+          </div>
 
           <Link
             to="/faculty/student-list"
@@ -73,7 +116,16 @@ const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <Users size={20} /> Create Project Group
           </Link>
 
-          <button className="flex items-center gap-2 text-red-500 hover:underline mt-4 cursor-pointer " onClick={logout} >
+          <Link
+            to="/faculty/profile"
+            className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
+            onClick={() => setSidebarOpen(false)}>
+            <Users size={20} /> Profile
+          </Link>
+
+          <button
+            className="flex items-center gap-2 text-red-500 hover:underline mt-4 cursor-pointer"
+            onClick={logout}>
             <LogOut size={20} /> Logout
           </button>
         </nav>
