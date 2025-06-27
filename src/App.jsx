@@ -24,6 +24,7 @@ import AdminProfile from "./components/admin/AdminProfile";
 import FacultyProfile from './components/faculty/FacultyProfile';
 import FacultyTasks from "./components/faculty/FacultyTasks";
 import FacultyEvaluation from "./components/faculty/FacultyEvaluation";
+import StudentTask from "./components/student/StudentTask";
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
           <Route index element={<StudentDashboard />} />
           <Route path="project" element={<ProjectGroup />} />
           <Route path="profile" element={<StudentProfile />} />
+          <Route path="task" element={<StudentTask />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -19,11 +19,13 @@ const FacultyEvaluation = () => {
   const [expandedTask, setExpandedTask] = useState(null);
   const [taskDetails, setTaskDetails] = useState({});
   const [localSubmissions, setLocalSubmissions] = useState({});
+  const [submittingTasks, setSubmittingTasks] = useState({});
 
   const token = localStorage.getItem("token");
 
   const fetchGroups = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(
         "http://localhost:5000/api/faculty/get-my-groups",
         {
@@ -31,29 +33,40 @@ const FacultyEvaluation = () => {
         }
       );
 
-      const groupOptions = res.data.data.map((group) => ({
+      const updatedGroups = res.data.data.map((group) => ({
         label: group.projectTitle,
         value: group,
       }));
-      setGroups(groupOptions);
+
+      setGroups(updatedGroups);
+
+      // Update selected group if it exists in the new data
+      if (selectedGroup) {
+        const updatedSelectedGroup = updatedGroups.find(
+          (g) => g.value._id === selectedGroup.value._id
+        );
+        if (updatedSelectedGroup) {
+          setSelectedGroup(updatedSelectedGroup);
+        }
+      }
     } catch (err) {
       toast.error("Failed to fetch groups");
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchTaskDetails = async (taskId) => {
-    if (!taskDetails[taskId]) {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/faculty/get-task-info/${taskId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setTaskDetails((prev) => ({ ...prev, [taskId]: res.data.task }));
-      } catch (err) {
-        console.error("Failed to fetch task details", err);
-      }
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/faculty/get-task-info/${taskId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setTaskDetails((prev) => ({ ...prev, [taskId]: res.data.task }));
+    } catch (err) {
+      console.error("Failed to fetch task details", err);
     }
   };
 
@@ -74,10 +87,10 @@ const FacultyEvaluation = () => {
       }, {});
       setLocalSubmissions(subs);
 
-      const taskIds = selectedGroup.value.submissions.map((s) => s.taskId);
-      taskIds.forEach((id) => {
-        if (!taskDetails[id]) {
-          fetchTaskDetails(id);
+      // Fetch task details for any new submissions
+      selectedGroup.value.submissions.forEach((sub) => {
+        if (!taskDetails[sub.taskId]) {
+          fetchTaskDetails(sub.taskId);
         }
       });
     } else {
@@ -86,38 +99,82 @@ const FacultyEvaluation = () => {
   }, [selectedGroup]);
 
   const handleEvaluationSubmit = async (submission, groupId, taskId) => {
-    const status = submission.statusChoice || "resubmit";
+    // Validate status
+    const validStatuses = ["approved", "resubmit"];
+    const status = validStatuses.includes(submission.statusChoice)
+      ? submission.statusChoice
+      : "resubmit";
+
     const teacherRemark = submission.teacherRemark || "";
 
+    // Prepare marks data
     let marksPerStudent = [];
     if (status === "approved") {
       marksPerStudent = submission.marksPerStudent || [];
+      
+      // Validate marks data
       const allFilled =
         marksPerStudent.length === selectedGroup.value.members.length &&
-        marksPerStudent.every((m) => m.marks !== "");
+        marksPerStudent.every((m) => m.marks !== "" && !isNaN(m.marks));
+
       if (!allFilled) {
-        toast.warning("Enter marks for all students");
+        toast.warning("Please enter valid marks for all students");
         return;
       }
+
+      // Convert string marks to numbers
+      marksPerStudent = marksPerStudent.map((m) => ({
+        ...m,
+        marks: Number(m.marks),
+      }));
     }
 
+    // Optimistic update
+    const previousSubmission = localSubmissions[taskId];
+    setLocalSubmissions((prev) => ({
+      ...prev,
+      [taskId]: {
+        ...prev[taskId],
+        status,
+        teacherRemark,
+        marksPerStudent,
+      },
+    }));
+
+    setSubmittingTasks((prev) => ({ ...prev, [taskId]: true }));
+
     try {
-      setLoading(true);
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:5000/api/faculty/evaluate/project-groups/${groupId}/tasks/${taskId}`,
         {
           status,
           teacherRemark,
           marksPerStudent,
         },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      toast.success("Evaluation submitted successfully");
-      fetchGroups();
+
+      toast.success(response.data.message || "Evaluation submitted successfully");
+      
+      // Refresh data from server to ensure consistency
+      await fetchGroups();
     } catch (err) {
-      toast.error("Evaluation failed");
+      console.error("Evaluation error:", err);
+      
+      // Revert optimistic update on failure
+      setLocalSubmissions((prev) => ({
+        ...prev,
+        [taskId]: previousSubmission,
+      }));
+
+      toast.error(
+        err.response?.data?.message || 
+        "Evaluation failed. Please try again."
+      );
     } finally {
-      setLoading(false);
+      setSubmittingTasks((prev) => ({ ...prev, [taskId]: false }));
     }
   };
 
@@ -203,6 +260,7 @@ const FacultyEvaluation = () => {
           placeholder="Search groups..."
           className="react-select-container"
           classNamePrefix="react-select"
+          isLoading={loading}
         />
       </div>
 
@@ -237,17 +295,27 @@ const FacultyEvaluation = () => {
               localSubmissions[taskId]?.statusChoice || "submitted";
             const isExpanded = expandedTask === taskId;
             const localSubmission = localSubmissions[taskId] || {};
-            const submitter = members.find((m) => m._id === submission.submittedBy);
+            const submitter = members.find(
+              (m) => m._id === submission.submittedBy
+            );
 
             return (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow-sm border w-full overflow-hidden">
+                className="bg-white rounded-lg shadow-sm border w-full overflow-hidden"
+              >
                 <div
                   className={`px-6 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 ${statusStyles[status]}`}
-                  onClick={() => toggleTaskExpansion(taskId)}>
+                  onClick={() => toggleTaskExpansion(taskId)}
+                >
                   <div className="flex items-start gap-4 flex-1 flex-col sm:flex-row">
-                    <div className="flex-shrink-0">{isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</div>
+                    <div className="flex-shrink-0">
+                      {isExpanded ? (
+                        <ChevronUp size={20} />
+                      ) : (
+                        <ChevronDown size={20} />
+                      )}
+                    </div>
                     <div className="flex-1">
                       <h3 className="font-medium flex items-center">
                         {statusIcons[status]} {taskTitle}
@@ -258,7 +326,8 @@ const FacultyEvaluation = () => {
                         </p>
                       )}
                       <p className="text-xs text-gray-500 mt-1">
-                        Submitted on: {new Date(submission.updatedAt).toLocaleString()}
+                        Submitted on:{" "}
+                        {new Date(submission.updatedAt).toLocaleString()}
                       </p>
                       {submitter && (
                         <p className="text-xs text-gray-500">
@@ -280,7 +349,8 @@ const FacultyEvaluation = () => {
                           href={submission.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
+                          className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
                           <Download size={16} className="mr-2" />
                           Download Submission
                         </a>
@@ -307,7 +377,8 @@ const FacultyEvaluation = () => {
                       <select
                         className="w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
                         value={localSubmission.statusChoice || "resubmit"}
-                        onChange={(e) => handleStatusChange(e, taskId)}>
+                        onChange={(e) => handleStatusChange(e, taskId)}
+                      >
                         <option value="resubmit">Request Resubmission</option>
                         <option value="approved">Approve Submission</option>
                       </select>
@@ -322,14 +393,15 @@ const FacultyEvaluation = () => {
                           {members.map((student, i) => (
                             <div
                               key={student._id}
-                              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
+                            >
                               <div className="sm:w-48">
                                 <p className="text-sm font-medium">
                                   {student.name}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                 <span> Roll No: </span>
-                                  { student.rollNo}
+                                  <span> Roll No: </span>
+                                  {student.rollNo}
                                 </p>
                               </div>
                               <input
@@ -339,7 +411,8 @@ const FacultyEvaluation = () => {
                                 max="10"
                                 className="border rounded-lg px-3 py-2 text-sm w-full sm:w-24 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
                                 value={
-                                  localSubmission.marksPerStudent?.[i]?.marks || ""
+                                  localSubmission.marksPerStudent?.[i]?.marks ||
+                                  ""
                                 }
                                 onChange={(e) =>
                                   handleMarksChange(e, taskId, i, student._id)
@@ -360,8 +433,9 @@ const FacultyEvaluation = () => {
                         )
                       }
                       className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg transition-colors flex items-center justify-center"
-                      disabled={loading}>
-                      {loading ? (
+                      disabled={submittingTasks[taskId] || loading}
+                    >
+                      {submittingTasks[taskId] ? (
                         <>
                           <Loader2 className="animate-spin mr-2 h-4 w-4" />
                           Processing...
