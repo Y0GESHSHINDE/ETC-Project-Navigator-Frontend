@@ -103,10 +103,10 @@ const AdminDashboard = () => {
   }, []);
 
   const navButtons = [
-    { label: "Manage Students", to: "/faculty/student-list" },
-    { label: "Manage Faculty", to: "/faculty/list" },
-    { label: "Add Faculty", to: "/faculty/add-faculty" },
-    { label: "Add Student", to: "/faculty/add-student" },
+    { label: "Manage Students", to: "/admin/student-list" },
+    { label: "Manage Faculty", to: "/admin/faculty-list" },
+    { label: "Add Faculty", to: "/admin/add-faculty" },
+    { label: "Add Student", to: "/admin/add-student" },
   ];
 
   return (
