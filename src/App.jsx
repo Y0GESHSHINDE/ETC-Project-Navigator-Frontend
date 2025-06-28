@@ -62,7 +62,7 @@ function App() {
           <Route index element={<FacultyDashboard />} />
           <Route path="add-student" element={<AddStudentPage />} />
           <Route path="student-list" element={<StudentList />} />
-          <Route path="get-my-grops" element={<FacultyProjectGroups />} />
+          <Route path="get-my-groups" element={<FacultyProjectGroups />} />
           <Route path="project-groups" element={<ProjectGroups />} />
           <Route path="createGroup" element={<CreateProjectGroup />} />
           <Route path="profile" element={<FacultyProfile />} />

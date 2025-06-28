@@ -65,7 +65,7 @@ const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
             {isProjectGroupsOpen && (
               <div className="pl-8 space-y-3">
                 <Link
-                  to="/faculty/get-my-grops"
+                  to="/faculty/get-my-groups"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
                   onClick={() => setSidebarOpen(false)}>
                   <Users size={20} /> My Groups

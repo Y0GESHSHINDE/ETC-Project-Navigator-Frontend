@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { exportToCSV } from "../../utils/exportToCSV"; // adjust path as needed
 
 const StudentList = () => {
   const [students, setStudents] = useState([]);
@@ -22,6 +23,8 @@ const StudentList = () => {
   const [projectInfo, setProjectInfo] = useState(null);
   const [buttonLoadingId, setButtonLoadingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [groups, setGroups] = useState([]);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,29 +38,41 @@ const StudentList = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchAllData = async () => {
       try {
-        const res = await fetch(`${apiBaseUrl}/api/admin/all-students`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const [studentRes, groupRes] = await Promise.all([
+          fetch(`${apiBaseUrl}/api/admin/all-students`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }),
+          fetch(`${apiBaseUrl}/api/admin/group`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }),
+        ]);
 
-        if (!res.ok) throw new Error("Network response was not ok");
+        const [studentData, groupData] = await Promise.all([
+          studentRes.json(),
+          groupRes.json(),
+        ]);
 
-        const data = await res.json();
-        setStudents(data.data);
+        setStudents(studentData.data);
+        setGroups(groupData); // all group info
       } catch (err) {
-        console.error("Error fetching students:", err);
-        toast.error("Failed to load student list");
+        toast.error("Failed to load data");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudents();
+    fetchAllData();
   }, []);
 
   const openProjectModal = (student) => {
@@ -218,6 +233,22 @@ const StudentList = () => {
     );
   });
 
+  const handleExport = () => {
+    const sanitized = students.map((student) => {
+      const group = groups.find((g) => g._id === student.groupId);
+      return {
+        Name: student.name,
+        Email: student.email,
+        RollNo: student.rollNo,
+        Department: student.department || "N/A",
+        ProjectTitle: group?.projectTitle || "Not Assigned",
+      };
+    });
+
+    exportToCSV(sanitized, "student-list-with-projects");
+    console.log(sanitized);
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4">
       <ToastContainer />
@@ -230,8 +261,13 @@ const StudentList = () => {
           placeholder="Search by name, roll no, or email"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full max-w-md p-2 border rounded"
+          className=" w-full sm:max-w-md p-2 border rounded"
         />
+        <button
+          onClick={handleExport}
+          className="mb-4 bg-green-600 text-white mt-5 w-full  sm:w-fit sm:mt-0 sm:ml-20 px-4 py-2 rounded hover:bg-green-700 transition">
+          📤 Export CSV
+        </button>
       </div>
 
       {loading ? (

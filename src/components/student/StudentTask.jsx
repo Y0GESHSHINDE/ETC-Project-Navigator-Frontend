@@ -81,8 +81,10 @@ const StudentTask = () => {
       );
 
       toast.success("Submission successful");
-      await fetchGroupData(); // Refresh data
+     // Refresh data
       setSelectedFiles({ ...selectedFiles, [taskId]: null });
+
+      await fetchGroupData(); 
     } catch {
       toast.error("Upload failed");
     } finally {
