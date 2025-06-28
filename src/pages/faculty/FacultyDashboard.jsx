@@ -18,12 +18,13 @@ export default function FacultyDashboard() {
   const [groups, setGroups] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   // Fetch faculty groups
   const fetchGroups = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/faculty/get-my-groups",
+        `${apiBaseUrl}/api/faculty/get-my-groups`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setGroups(res.data.data || []);
@@ -36,7 +37,7 @@ export default function FacultyDashboard() {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/faculty/get-all-task/",
+        `${apiBaseUrl}/api/faculty/get-all-task/`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTasks(res.data.tasks || []);
@@ -76,8 +77,7 @@ export default function FacultyDashboard() {
       acc +
       (g.submissions
         ? g.submissions.filter(
-            (sub) =>
-              sub.status === "submitted" || sub.status === "resubmit"
+            (sub) => sub.status === "submitted" || sub.status === "resubmit"
           ).length
         : 0)
     );
@@ -140,7 +140,9 @@ export default function FacultyDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-semibold text-gray-900">Faculty Dashboard</h1>
+      <h1 className="text-3xl font-semibold text-gray-900">
+        Faculty Dashboard
+      </h1>
       <p className="text-gray-600">
         Welcome, manage your project groups, tasks, and evaluations here.
       </p>
@@ -151,8 +153,7 @@ export default function FacultyDashboard() {
           <Link
             key={label}
             to={to}
-            className="flex items-center justify-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:border-blue-400 transition"
-          >
+            className="flex items-center justify-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:border-blue-400 transition">
             <Icon className="w-5 h-5 text-blue-600" />
             {label}
           </Link>
@@ -201,74 +202,74 @@ export default function FacultyDashboard() {
             <p className="text-gray-500">No tasks activated recently.</p>
           ) : (
             <ul className="space-y-3">
-              {recentActivatedTasksTop5.map(({ groupTitle, taskId, activatedAt }, i) => {
-                const task = tasks.find((t) => t._id === taskId);
-                return (
-                  <li
-                    key={i}
-                    className="flex justify-between border-b border-gray-200 pb-2"
-                  >
-                    <div>
-                      <p className="font-medium text-gray-800">
-                        {task ? task.title : "Unknown Task"}
-                      </p>
-                      <p className="text-sm text-gray-500">{groupTitle}</p>
-                    </div>
-                    <time
-                      className="text-sm text-gray-400 whitespace-nowrap"
-                      dateTime={activatedAt}
-                      title={new Date(activatedAt).toLocaleString()}
-                    >
-                      {new Date(activatedAt).toLocaleDateString()}
-                    </time>
-                  </li>
-                );
-              })}
+              {recentActivatedTasksTop5.map(
+                ({ groupTitle, taskId, activatedAt }, i) => {
+                  const task = tasks.find((t) => t._id === taskId);
+                  return (
+                    <li
+                      key={i}
+                      className="flex justify-between border-b border-gray-200 pb-2">
+                      <div>
+                        <p className="font-medium text-gray-800">
+                          {task ? task.title : "Unknown Task"}
+                        </p>
+                        <p className="text-sm text-gray-500">{groupTitle}</p>
+                      </div>
+                      <time
+                        className="text-sm text-gray-400 whitespace-nowrap"
+                        dateTime={activatedAt}
+                        title={new Date(activatedAt).toLocaleString()}>
+                        {new Date(activatedAt).toLocaleDateString()}
+                      </time>
+                    </li>
+                  );
+                }
+              )}
             </ul>
           )}
         </section>
 
         {/* Recent Pending Evaluations */}
         <section className="bg-white rounded-lg shadow p-5">
-          <h3 className="text-lg font-semibold mb-4">Recent Pending Evaluations</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            Recent Pending Evaluations
+          </h3>
           {recentPendingSubsTop5.length === 0 ? (
             <p className="text-gray-500">No pending evaluations.</p>
           ) : (
             <ul className="space-y-3">
-              {recentPendingSubsTop5.map(({ groupTitle, status, fileUrl, updatedAt }, i) => (
-                <li
-                  key={i}
-                  className="flex flex-col border-b border-gray-200 pb-2"
-                >
-                  <div className="flex justify-between items-center">
-                    <p className="font-medium text-gray-800">{groupTitle}</p>
-                    <span
-                      className={`px-2 py-0.5 text-xs font-semibold rounded ${
-                        status === "submitted"
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {status.toUpperCase()}
-                    </span>
-                  </div>
-                  <a
-                    href={fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm mt-1"
-                  >
-                    View Submission
-                  </a>
-                  <time
-                    className="text-gray-400 text-xs mt-1"
-                    dateTime={updatedAt}
-                    title={new Date(updatedAt).toLocaleString()}
-                  >
-                    Submitted: {new Date(updatedAt).toLocaleDateString()}
-                  </time>
-                </li>
-              ))}
+              {recentPendingSubsTop5.map(
+                ({ groupTitle, status, fileUrl, updatedAt }, i) => (
+                  <li
+                    key={i}
+                    className="flex flex-col border-b border-gray-200 pb-2">
+                    <div className="flex justify-between items-center">
+                      <p className="font-medium text-gray-800">{groupTitle}</p>
+                      <span
+                        className={`px-2 py-0.5 text-xs font-semibold rounded ${
+                          status === "submitted"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                        }`}>
+                        {status.toUpperCase()}
+                      </span>
+                    </div>
+                    <a
+                      href={fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline text-sm mt-1">
+                      View Submission
+                    </a>
+                    <time
+                      className="text-gray-400 text-xs mt-1"
+                      dateTime={updatedAt}
+                      title={new Date(updatedAt).toLocaleString()}>
+                      Submitted: {new Date(updatedAt).toLocaleDateString()}
+                    </time>
+                  </li>
+                )
+              )}
             </ul>
           )}
         </section>

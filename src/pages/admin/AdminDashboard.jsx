@@ -15,6 +15,8 @@ const AdminDashboard = () => {
   const [recentGroups, setRecentGroups] = useState([]);
   const [topGroups, setTopGroups] = useState([]);
   const token = localStorage.getItem("token");
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
   const fetchDashboardData = async () => {
     try {
@@ -23,15 +25,15 @@ const AdminDashboard = () => {
       };
 
       const [studentRes, facultyRes, groupRes] = await Promise.all([
-        fetch("http://localhost:5000/api/admin/all-students", {
+        fetch(`${apiBaseUrl}/api/admin/all-students`, {
           method: "GET",
           headers,
         }),
-        fetch("http://localhost:5000/api/admin/all-faculty", {
+        fetch(`${apiBaseUrl}/api/admin/all-faculty`, {
           method: "GET",
           headers,
         }),
-        fetch("http://localhost:5000/api/admin/group", {
+        fetch(`${apiBaseUrl}/api/admin/group`, {
           method: "GET",
           headers,
         }),
