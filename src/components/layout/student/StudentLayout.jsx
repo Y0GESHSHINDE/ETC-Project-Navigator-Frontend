@@ -7,14 +7,14 @@ const StudentLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100">
+    <div className="flex bg-white  h-screen overflow-hidden">
       {/* Sidebar */}
-      <StudentSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <StudentSidebar  sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Main content */}
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col  flex-1">
         <StudentTopbar setSidebarOpen={setSidebarOpen} />
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto p-0">
           <Outlet />
         </main>
       </div>

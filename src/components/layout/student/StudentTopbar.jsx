@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu ,LogOut} from "lucide-react";
 
 const StudentTopbar = ({ setSidebarOpen }) => {
   const [UserData, setUserData] = useState([]);
@@ -48,8 +48,10 @@ const StudentTopbar = ({ setSidebarOpen }) => {
         <Menu size={24} />
       </button>
 
-      <h1 className=" text:md sm:text-lg font-semibold text-gray-800">{UserData.name}</h1>
-      <button className="text-sm text-red-600 hover:underline hover:text-red-600 cursor-pointer" onClick={logout}>Logout</button>
+      <h1 className=" text:md sm:text-lg font-semibold text-black">{UserData.name}</h1>
+      <button className="text-sm text-red-600 hover:underline hover:text-red-600 cursor-pointer" onClick={logout}>
+        <LogOut/>
+      </button>
     </header>
   );
 };

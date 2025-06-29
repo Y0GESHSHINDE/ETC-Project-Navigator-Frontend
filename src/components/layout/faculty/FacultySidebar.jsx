@@ -31,7 +31,9 @@ const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative lg:block`}>
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-bold text-gray-800">Faculty Panel</h2>
+          <h1 className="text-lg lg:text-xl font-bold text-purple-500 bg-clip-text ">
+            Project Navigator
+          </h1>
           <button
             className="lg:hidden text-gray-600"
             onClick={() => setSidebarOpen(false)}>
@@ -82,14 +84,14 @@ const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   to="/faculty/task"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
                   onClick={() => setSidebarOpen(false)}>
-                  <FileCheck  size={20} /> Task
+                  <FileCheck size={20} /> Task
                 </Link>
 
                 <Link
                   to="/faculty/evaluation"
                   className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
                   onClick={() => setSidebarOpen(false)}>
-                  <FileCheck  size={20} /> Task Evaluation
+                  <FileCheck size={20} /> Task Evaluation
                 </Link>
               </div>
             )}
