@@ -14,7 +14,7 @@ const FacultyLayout = () => {
       {/* Main content */}
       <div className="flex flex-col flex-1">
         <FacultyTopbar setSidebarOpen={setSidebarOpen} />
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto ">
           <Outlet />
         </main>
       </div>

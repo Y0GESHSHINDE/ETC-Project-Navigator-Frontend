@@ -38,7 +38,7 @@ function FacultyProfile() {
           name: data.data.name,
           email: data.data.email,
           department: data.data.department,
-          profileImage: data.data.profileImage || ''
+          profileImage: data.data.profileImage
         });
       } catch (error) {
         console.error('Error:', error);
@@ -105,6 +105,8 @@ function FacultyProfile() {
       </div>
     );
   }
+
+  // console.log(profile)
 
   return (
     <div className="max-w-4xl mx-auto p-6">

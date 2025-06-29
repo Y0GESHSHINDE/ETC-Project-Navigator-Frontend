@@ -127,7 +127,9 @@ const FacultyList = () => {
 
       toast.success("Faculty updated successfully");
       setFaculty((prev) =>
-        prev.map((f) => (f._id === selectedFaculty._id ? { ...f, ...payload } : f))
+        prev.map((f) =>
+          f._id === selectedFaculty._id ? { ...f, ...payload } : f
+        )
       );
       closeModal();
     } catch (err) {
@@ -189,25 +191,23 @@ const FacultyList = () => {
           <span>{member.email}</span>
         </p>
         <p className="mt-1 text-gray-600 text-sm">
-          <span className="font-medium">Department:</span> {member.department || "N/A"}
+          <span className="font-medium">Department:</span>{" "}
+          {member.department || "N/A"}
         </p>
         <div className=" bg-white w-full sm:flex gap-3 justify-center md:block">
           <button
             onClick={() => openUpdateModal(member)}
-            className="flex items-center gap-1  w-full md:w-full sm:w-30 mt-4 cursor-pointer   justify-center border border-blue-500 text-blue-600 hover:bg-blue-600 hover:text-white transition px-3 py-1 rounded-md text-sm font-medium"
-          >
+            className="flex items-center gap-1  w-full md:w-full sm:w-30 mt-4 cursor-pointer   justify-center border border-blue-500 text-blue-600 hover:bg-blue-600 hover:text-white transition px-3 py-1 rounded-md text-sm font-medium">
             <Edit size={14} /> Edit
           </button>
           <button
             onClick={() => openDeleteModal(member)}
-            className="flex items-center gap-1 border mt-4 w-full md:w-full sm:w-30  cursor-pointer   justify-center border-red-500 text-red-600 hover:bg-red-600 hover:text-white transition px-3 py-1 rounded-md text-sm font-medium"
-          >
+            className="flex items-center gap-1 border mt-4 w-full md:w-full sm:w-30  cursor-pointer   justify-center border-red-500 text-red-600 hover:bg-red-600 hover:text-white transition px-3 py-1 rounded-md text-sm font-medium">
             <Trash2 size={14} /> Delete
           </button>
           <button
             onClick={() => openViewModal(member)}
-            className="flex items-center gap-1 border mt-4 w-full md:w-full sm:w-30  cursor-pointer  justify-center border-green-500 text-green-600 hover:bg-green-600 hover:text-white transition px-3 py-1 rounded-md text-sm font-medium"
-          >
+            className="flex items-center gap-1 border mt-4 w-full md:w-full sm:w-30  cursor-pointer  justify-center border-green-500 text-green-600 hover:bg-green-600 hover:text-white transition px-3 py-1 rounded-md text-sm font-medium">
             <Users size={14} /> Groups
           </button>
         </div>
