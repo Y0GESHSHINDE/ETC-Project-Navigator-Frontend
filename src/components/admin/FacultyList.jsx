@@ -269,6 +269,7 @@ const FacultyList = () => {
           handleInputChange={handleInputChange}
         />
       )}
+      
 
       {deleteModalOpen && selectedFaculty && (
         <DeleteFacultyModal
