@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, User, Lock, Building2 } from 'lucide-react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Mail, User, Lock, Building2, UserCheck, Eye, EyeOff } from 'lucide-react';
 
 const AddFacultyPage = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +9,9 @@ const AddFacultyPage = () => {
     password: '',
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleChange = (e) => {
@@ -19,6 +20,7 @@ const AddFacultyPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const res = await fetch(`${apiBaseUrl}/api/users/register`, {
@@ -35,100 +37,158 @@ const AddFacultyPage = () => {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success('🎉 Faculty added successfully!');
+        alert('🎉 Faculty added successfully!');
         setFormData({ name: '', email: '', department: '', password: '' });
       } else {
-        toast.error(data.message || 'Failed to add faculty');
+        alert(data.message || 'Failed to add faculty');
       }
     } catch (err) {
-      toast.error('❌ Error adding faculty');
+      alert('❌ Error adding faculty');
       console.error('Error:', err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg border">
-      <ToastContainer />
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        ➕ Add New Faculty
-      </h2>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-12 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-5">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-2">
+            Faculty Registration
+          </h1>
+          <p className="text-gray-600 text-lg">Add a new faculty member to the academic system</p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="grid gap-5">
-        {/* Name */}
-        <div>
-          <label className="block font-semibold text-gray-700 mb-1">Full Name</label>
-          <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <User className="w-5 h-5 text-gray-400 mr-2" />
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              required
-              onChange={handleChange}
-              placeholder="Prof. A. Sharma"
-              className="w-full outline-none"
-            />
+        {/* Form Card */}
+        <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 hover:shadow-3xl transition-all duration-300">
+          <div className="space-y-6">
+            {/* Full Name Field */}
+            <div className="group">
+              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                Full Name
+              </label>
+              <div className="relative">
+                <User className="absolute top-4 left-4 text-gray-400 group-hover:text-emerald-500 transition-colors duration-200" size={20} />
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Prof. Dr. John Doe"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-200 placeholder-gray-400 text-gray-800 font-medium group-hover:border-gray-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
+            </div>
+
+            {/* Email Field */}
+            <div className="group">
+              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                Email Address
+              </label>tablin
+              <div className="relative">
+                <Mail className="absolute top-4 left-4 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" size={20} />
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="professor@university.edu"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-200 placeholder-gray-400 text-gray-800 font-medium group-hover:border-gray-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-emerald-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
+            </div>
+
+            {/* Department Field */}
+            <div className="group">
+              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                Department
+              </label>
+              <div className="relative">
+                <Building2 className="absolute top-4 left-4 text-gray-400 group-hover:text-purple-500 transition-colors duration-200" size={20} />
+                <input
+                  type="text"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  placeholder="Electronics and Telecommunication Engineering"
+                  className="w-full pl-12 pr-4 py-4 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-200 placeholder-gray-400 text-gray-800 font-medium group-hover:border-gray-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="group">
+              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                Temporary Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute top-4 left-4 text-gray-400 group-hover:text-red-500 transition-colors duration-200" size={20} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Create a secure password"
+                  className="w-full pl-12 pr-12 py-4 bg-gray-50/50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-200 placeholder-gray-400 text-gray-800 font-medium group-hover:border-gray-300"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-4">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className={`w-full h-11 sm:h-12 lg:h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2 sm:gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base ${
+                  isSubmitting
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
+                }`}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Adding Faculty...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-3">
+                    <UserCheck size={20} />
+                    Add Faculty Member
+                  </div>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Email */}
-        <div>
-          <label className="block font-semibold text-gray-700 mb-1">Email</label>
-          <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <Mail className="w-5 h-5 text-gray-400 mr-2" />
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              required
-              onChange={handleChange}
-              placeholder="faculty@example.com"
-              className="w-full outline-none"
-            />
-          </div>
+        {/* Footer Note */}
+        <div className="text-center mt-8">
+          <p className="text-gray-500 text-sm">
+            Faculty member will receive login credentials and system access details via email
+          </p>
         </div>
-
-        {/* Department */}
-        <div>
-          <label className="block font-semibold text-gray-700 mb-1">Department</label>
-          <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <Building2 className="w-5 h-5 text-gray-400 mr-2" />
-            <input
-              type="text"
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-              placeholder="E&TC"
-              className="w-full outline-none"
-            />
-          </div>
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block font-semibold text-gray-700 mb-1">Temporary Password</label>
-          <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-blue-400">
-            <Lock className="w-5 h-5 text-gray-400 mr-2" />
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              required
-              onChange={handleChange}
-              placeholder="Password123"
-              className="w-full outline-none"
-            />
-          </div>
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          Add Faculty
-        </button>
-      </form>
+      </div>
     </div>
   );
 };

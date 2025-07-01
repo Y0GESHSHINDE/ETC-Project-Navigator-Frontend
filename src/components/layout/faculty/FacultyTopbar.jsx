@@ -1,25 +1,33 @@
-import React from 'react';
-import { Menu ,LogOut} from 'lucide-react';
+import React from "react";
+import { Menu, LogOut } from "lucide-react";
 
 const FacultyTopbar = ({ setSidebarOpen }) => {
   const logout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login"; 
+    window.location.href = "/login";
   };
+
   return (
-    <header className="bg-white shadow-md p-4 flex items-center justify-between">
-      {/* Hamburger for mobile */}
+    <header className="bg-white shadow px-4 py-3 flex items-center justify-between">
+      {/* Mobile menu button */}
       <button
-        onClick={() => setSidebarOpen(true)}
         className="lg:hidden text-gray-700"
+        onClick={() => setSidebarOpen(true)}
       >
         <Menu size={24} />
       </button>
 
-      <h1 className="text-lg font-semibold text-gray-800">Welcome, Faculty</h1>
-      <button className="text-sm text-red-600 hover:underline cursor-pointer" onClick={logout}>
-        
-                <LogOut  />
+      {/* Title */}
+      <h1 className="text-lg font-semibold text-gray-800">
+        Welcome, Faculty
+      </h1>
+
+      {/* Logout button */}
+      <button
+        className="text-red-600 hover:underline flex items-center gap-1"
+        onClick={logout}
+      >
+        <LogOut size={20} /> Logout
       </button>
     </header>
   );

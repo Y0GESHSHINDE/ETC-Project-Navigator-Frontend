@@ -7,14 +7,12 @@ import {
   ChevronUp,
   ChevronDown,
   FileCheck,
+  UserCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const StudentSidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  // console.log("StudentSidebar rendered");
-  const token = localStorage.getItem("token");
-  // console.log("Token:", token);
-  const [isProjectGroupsOpen, setIsProjectGroupsOpen] = useState(false);
+  const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -23,79 +21,84 @@ const StudentSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   return (
     <>
-      {/* Mobile Sidebar */}
+      {/* Mobile Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-transparent  bg-opacity-25 transition-opacity lg:hidden ${
+        className={`fixed inset-0 z-40 bg-black bg-opacity-30 transition-opacity lg:hidden ${
           sidebarOpen ? "block" : "hidden"
         }`}
-        onClick={() => setSidebarOpen(false)}></div>
+        onClick={() => setSidebarOpen(false)}
+      ></div>
 
+      {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg- bg-white shadow-lg transform transition-transform lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 w-64 h-full bg-white shadow-lg transform transition-transform lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:relative lg:block`}>
+        } lg:relative lg:block`}
+      >
+        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h1 className="text-lg lg:text-xl font-bold text-purple-500 bg-clip-text ">
-            Project Navigator
-          </h1>
-          <button
-            className="lg:hidden text-black"
-            onClick={() => setSidebarOpen(false)}>
+          <h1 className="text-xl font-bold text-purple-600">Project Navigator</h1>
+          <button className="lg:hidden text-gray-600" onClick={() => setSidebarOpen(false)}>
             <X />
           </button>
         </div>
 
-        <nav className="p-4 space-y-4">
+        {/* Navigation */}
+        <nav className="p-4 space-y-4 text-gray-700">
           <Link
             to="/student"
-            className="flex items-center gap-2 text-blac hover:text-blue-600"
-            onClick={() => setSidebarOpen(false)}>
+            className="flex items-center gap-2 hover:text-blue-600"
+            onClick={() => setSidebarOpen(false)}
+          >
             <LayoutDashboard size={20} /> Dashboard
           </Link>
 
-          <div className="space-y-2">
+          {/* Project Dropdown */}
+          <div>
             <button
-              className="flex items-center justify-between w-full text-black hover:text-blue-600"
-              onClick={() => setIsProjectGroupsOpen(!isProjectGroupsOpen)}>
-              <div className="flex items-center gap-2">
+              className="flex items-center justify-between w-full hover:text-blue-600"
+              onClick={() => setIsProjectMenuOpen(!isProjectMenuOpen)}
+            >
+              <span className="flex items-center gap-2">
                 <Users size={20} /> Project
-              </div>
-              {isProjectGroupsOpen ? (
-                <ChevronUp size={18} />
-              ) : (
-                <ChevronDown size={18} />
-              )}
+              </span>
+              {isProjectMenuOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
             </button>
 
-            {isProjectGroupsOpen && (
-              <div className="pl-8 space-y-3">
+            {isProjectMenuOpen && (
+              <div className="mt-2 ml-6 space-y-3 text-sm">
                 <Link
                   to="/student/project"
-                  className="flex items-center gap-2 text-black hover:text-blue-600"
-                  onClick={() => setSidebarOpen(false)}>
-                  <Users size={20} /> Project Group info
+                  className="flex items-center gap-2 hover:text-blue-600"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Users size={18} /> Group Info
                 </Link>
-
                 <Link
                   to="/student/task"
-                  className="flex items-center gap-2 text-black hover:text-blue-600"
-                  onClick={() => setSidebarOpen(false)}>
-                  <FileCheck size={20} /> Project Task
+                  className="flex items-center gap-2 hover:text-blue-600"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <FileCheck size={18} /> Tasks
                 </Link>
               </div>
             )}
           </div>
 
+          {/* Profile */}
           <Link
             to="/student/profile"
-            className="flex items-center gap-2 text-black hover:text-blue-600"
-            onClick={() => setSidebarOpen(false)}>
-            <Users size={20} /> Profile
+            className="flex items-center gap-2 hover:text-blue-600"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <UserCircle size={20} /> Profile
           </Link>
 
+          {/* Logout */}
           <button
-            className="flex items-center gap-2 text-red-700 hover:underline mt-4 hover:text-red-700 cursor-pointer"
-            onClick={logout}>
+            onClick={logout}
+            className="flex items-center gap-2 text-red-600 hover:underline mt-6"
+          >
             <LogOut size={20} /> Logout
           </button>
         </nav>
