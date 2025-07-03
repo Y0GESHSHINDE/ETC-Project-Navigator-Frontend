@@ -16,7 +16,7 @@ const StudentSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    window.location.href = "/"; 
   };
 
   return (

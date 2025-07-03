@@ -4,7 +4,7 @@ import { Menu ,LogOut} from 'lucide-react';
 const AdminTopbar = ({ setSidebarOpen }) => {
     const logout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login"; 
+    window.location.href = "/"; 
   };
   return (
     <header className="bg-white shadow-md p-4 flex items-center justify-between">

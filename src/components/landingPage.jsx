@@ -172,7 +172,7 @@ export default function LandingPage() {
               <Sparkles size={14} className="mr-2 text-yellow-400" />
               <span className="text-slate-300">Daily visitors:</span>
               <span className="text-white font-semibold ml-1">
-                500+ students & faculty
+                200+ students & faculty
               </span>
               <div className="ml-3 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>

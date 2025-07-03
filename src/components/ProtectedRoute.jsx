@@ -14,9 +14,6 @@ const ProtectedRoute = ({ children, role }) => {
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-
-
-
   useEffect(() => {
     const checkAccess = async () => {
       const token = localStorage.getItem('token');
