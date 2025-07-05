@@ -25,7 +25,7 @@ const FacultySidebar = ({ sidebarOpen, setSidebarOpen }) => {
     <>
       {/* Overlay for mobile */}
       <div
-        className={`fixed inset-0 z-40 bg-black bg-opacity-30 lg:hidden transition-opacity ${
+        className={`fixed inset-0 z-40 z-40 bg-black/20 backdrop-blur-sm bg-opacity-30 lg:hidden transition-opacity ${
           sidebarOpen ? "block" : "hidden"
         }`}
         onClick={() => setSidebarOpen(false)}

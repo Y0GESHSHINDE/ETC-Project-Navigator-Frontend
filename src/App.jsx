@@ -26,6 +26,8 @@ import FacultyTasks from "./components/faculty/FacultyTasks";
 import FacultyEvaluation from "./components/faculty/FacultyEvaluation";
 import StudentTask from "./components/student/StudentTask";
 import AdminTask from "./components/admin/AdminTask";
+import AdminEvalution from "./components/admin/AdminEvalution";
+import TaskList from "./components/admin/TaskList";
 
 function App() {
   return (
@@ -49,8 +51,9 @@ function App() {
           <Route path="faculty-list" element={<FacultyList />} />
           <Route path="student-list" element={<StudentList />} />
           <Route path="project-groups" element={<ProjectGroups />} />
+          <Route path="task-list" element={<TaskList />} />
           <Route path="task" element={<AdminTask />} />
-          <Route path="evaluation" element={<FacultyEvaluation />} />
+          <Route path="evaluation" element={<AdminEvalution />} />
           <Route path="profile" element={<AdminProfile />} />
         </Route>
 

@@ -463,8 +463,8 @@ export default function StudentDashboard() {
             </div>
             <div className="p-4 sm:p-6 lg:p-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                <a
-                  href="/student/project"
+                <Link
+                  to="/student/project"
                   className="group flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl sm:rounded-2xl border-2 border-indigo-200 hover:border-indigo-300 hover:shadow-lg transition-all duration-300">
                   <div className="bg-indigo-600 rounded-full p-3 sm:p-4 mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
                     <Folder className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -475,10 +475,10 @@ export default function StudentDashboard() {
                   <p className="text-slate-600 text-xs sm:text-sm text-center">
                     Access your project details and documentation
                   </p>
-                </a>
+                </Link>
 
-                <a
-                  href="/student/task"
+                <Link
+                  to="/student/task"
                   className="group flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-br from-green-50 to-green-100 rounded-xl sm:rounded-2xl border-2 border-green-200 hover:border-green-300 hover:shadow-lg transition-all duration-300">
                   <div className="bg-green-600 rounded-full p-3 sm:p-4 mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
                     <FileUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -489,10 +489,10 @@ export default function StudentDashboard() {
                   <p className="text-slate-600 text-xs sm:text-sm text-center">
                     Upload and manage your task submissions
                   </p>
-                </a>
+                </Link>
 
-                <a
-                  href="/student/profile"
+                <Link
+                  to="/student/profile"
                   className="group flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl sm:rounded-2xl border-2 border-purple-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300 sm:col-span-2 lg:col-span-1">
                   <div className="bg-purple-600 rounded-full p-3 sm:p-4 mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
                     <UserCircle className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -503,7 +503,7 @@ export default function StudentDashboard() {
                   <p className="text-slate-600 text-xs sm:text-sm text-center">
                     Update your personal information
                   </p>
-                </a>
+                </Link>
               </div>
             </div>
           </div>

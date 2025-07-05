@@ -13,15 +13,19 @@ import {
   CheckCircle,
   AlertCircle,
   X,
+  Camera,
+  Upload,
 } from "lucide-react";
 
 const StudentProfile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", profileImage: null });
   const [updating, setUpdating] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+  const [previewImage, setPreviewImage] = useState(null);
+  const [errors, setErrors] = useState({}); // Add errors state
 
   const token = localStorage.getItem("token");
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -35,7 +39,7 @@ const StudentProfile = () => {
         const data = await res.json();
         if (res.ok) {
           setUserData(data.data);
-          setFormData({ name: data.data.name, email: data.data.email, password: "" });
+          setFormData({ name: data.data.name, email: data.data.email, password: "", profileImage: null });
         } else {
           showToast(data.message || "Failed to load profile", "error");
         }
@@ -50,6 +54,29 @@ const StudentProfile = () => {
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, profileImage: file }));
+      
+      // Clear image error when file is selected
+      if (errors.profileImage) {
+        setErrors((prev) => ({ ...prev, profileImage: "" }));
+      }
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const showToast = (message, type = "success") => {
@@ -57,31 +84,68 @@ const StudentProfile = () => {
     setTimeout(() => setToast({ show: false, message: "", type }), 3000);
   };
 
+  // Validation function
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Check if name is empty
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    
+    // Check if image is required (only if user doesn't have an existing profile image)
+    if (!userData.profileImage && !formData.profileImage) {
+      newErrors.profileImage = "Profile image is required";
+    }
+    
+    // Optional: Add password validation if password is provided
+    if (formData.password && formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleUpdate = async () => {
+    // Validate form before submission
+    if (!validateForm()) {
+      showToast("Please fix the errors before submitting", "error");
+      return;
+    }
+
     setUpdating(true);
     try {
-      const payload = {
-        name: formData.name,
-        email: formData.email,
-      };
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      
       if (formData.password.trim()) {
-        payload.password = formData.password;
+        formDataToSend.append("password", formData.password);
+      }
+      
+      if (formData.profileImage) {
+        formDataToSend.append("file", formData.profileImage);
       }
 
       const res = await fetch(`${apiBaseUrl}/api/student/update-student-profile`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: formDataToSend,
       });
       const data = await res.json();
 
       if (res.ok) {
-        setUserData((prev) => ({ ...prev, ...payload }));
+        setUserData((prev) => ({ 
+          ...prev, 
+          name: formData.name,
+          ...(data.data?.profileImage && { profileImage: data.data.profileImage })
+        }));
         showToast("Profile updated successfully", "success");
         setShowModal(false);
+        setPreviewImage(null);
+        setErrors({}); // Clear errors on success
       } else {
         showToast(data.message || "Update failed", "error");
       }
@@ -94,7 +158,9 @@ const StudentProfile = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
-    setFormData((prev) => ({ ...prev, password: "" }));
+    setFormData((prev) => ({ ...prev, password: "", profileImage: null }));
+    setPreviewImage(null);
+    setErrors({}); // Clear errors when modal closes
   };
 
   return (
@@ -138,22 +204,49 @@ const StudentProfile = () => {
           </div>
         ) : userData ? (
           <div className="space-y-6">
+            {/* Profile Image Section */}
+            <div className="bg-white/80 rounded-2xl shadow-xl p-6 border">
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="relative">
+                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-100 shadow-lg">
+                    {userData.profileImage ? (
+                      <img 
+                        src={userData.profileImage} 
+                        alt="Profile" 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-200 to-indigo-200 flex items-center justify-center">
+                        <UserRound className="text-blue-600 w-16 h-16" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 p-2 bg-blue-600 rounded-full shadow-lg">
+                    <Camera className="text-white w-4 h-4" />
+                  </div>
+                </div>
+                <div className="text-center sm:text-left">
+                  <h3 className="text-2xl font-bold text-gray-800">{userData.name}</h3>
+                  <p className="text-gray-600">{userData.email}</p>
+                  <p className="text-sm text-blue-600 font-medium mt-1">{userData.department} • {userData.role}</p>
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm px-6 py-2 rounded-xl shadow hover:scale-105 transition"
+                  >
+                    <PencilLine size={16} className="inline mr-2" /> Update Profile
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Personal Info */}
             <div className="bg-white/80 rounded-2xl shadow-xl p-6 border">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-bold flex items-center gap-2">
-                  <div className="p-2 bg-blue-100 rounded-md">
-                    <UserRound className="text-blue-600 w-5 h-5" />
-                  </div>
-                  Personal Information
-                </h2>
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm px-4 py-2 rounded-xl shadow hover:scale-105 transition"
-                >
-                  <PencilLine size={16} className="inline mr-1" /> Update
-                </button>
-              </div>
+              <h2 className="text-lg font-bold flex items-center gap-2 mb-6">
+                <div className="p-2 bg-blue-100 rounded-md">
+                  <UserRound className="text-blue-600 w-5 h-5" />
+                </div>
+                Personal Information
+              </h2>
 
               <div className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <ProfileCard icon={<UserRound />} label="Full Name" value={userData.name} color="blue" />
@@ -194,22 +287,91 @@ const StudentProfile = () => {
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4 py-6">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-800">Update Profile</h3>
                 <button onClick={handleModalClose} className="p-1 rounded-full hover:bg-gray-100">
                   <X size={20} />
                 </button>
               </div>
+              
               <div className="space-y-4">
-                <InputField label="Full Name" type="text" value={formData.name} onChange={(e) => handleInputChange("name", e.target.value)} />
-                <InputField label="Email" type="email" value={formData.email} onChange={(e) => handleInputChange("email", e.target.value)} />
-                <InputField label="New Password" type="password" placeholder="Leave blank to keep current" value={formData.password} onChange={(e) => handleInputChange("password", e.target.value)} icon={<Lock className="w-4 h-4 text-gray-400" />} />
+                {/* Profile Image Upload */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700 block mb-2">
+                    Profile Image {!userData.profileImage && <span className="text-red-500">*</span>}
+                  </label>
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-200">
+                      {previewImage ? (
+                        <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
+                      ) : userData.profileImage ? (
+                        <img src={userData.profileImage} alt="Current" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                          <UserRound className="text-gray-400 w-8 h-8" />
+                        </div>
+                      )}
+                    </div>
+                    <label className={`cursor-pointer px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition ${
+                      errors.profileImage ? 'bg-red-100 hover:bg-red-200 text-red-700 border border-red-300' : 'bg-gray-100 hover:bg-gray-200'
+                    }`}>
+                      <Upload size={16} />
+                      Choose Image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
+                    {errors.profileImage && (
+                      <p className="text-red-500 text-xs text-center flex items-center gap-1">
+                        <AlertCircle size={12} />
+                        {errors.profileImage}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <InputField 
+                  label="Full Name" 
+                  type="text" 
+                  value={formData.name} 
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  error={errors.name}
+                  required={true}
+                />
+                <InputField 
+                  label="Email" 
+                  type="email" 
+                  value={formData.email} 
+                  onChange={(e) => handleInputChange("email", e.target.value)} 
+                  disabled={true}
+                />
+                <InputField 
+                  label="New Password" 
+                  type="password" 
+                  placeholder="Leave blank to keep current" 
+                  value={formData.password} 
+                  onChange={(e) => handleInputChange("password", e.target.value)} 
+                  icon={<Lock className="w-4 h-4 text-gray-400" />}
+                  error={errors.password}
+                />
+                
                 <div className="flex justify-end gap-3 pt-4">
-                  <button onClick={handleModalClose} disabled={updating} className="px-4 py-2 bg-gray-100 rounded-xl text-sm hover:bg-gray-200">
+                  <button 
+                    onClick={handleModalClose} 
+                    disabled={updating} 
+                    className="px-4 py-2 bg-gray-100 rounded-xl text-sm hover:bg-gray-200 disabled:opacity-50"
+                  >
                     Cancel
                   </button>
-                  <button onClick={handleUpdate} disabled={updating} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2">
+                  <button 
+                    onClick={handleUpdate} 
+                    disabled={updating} 
+                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2 disabled:opacity-50"
+                  >
                     {updating ? <Loader2 size={16} className="animate-spin" /> : "Save Changes"}
                   </button>
                 </div>
@@ -249,9 +411,11 @@ const ProfileCard = ({ icon, label, value, color = "gray" }) => {
 };
 
 // Input Field Component
-const InputField = ({ label, type, value, onChange, placeholder = "", icon }) => (
+const InputField = ({ label, type, value, onChange, placeholder = "", icon, disabled = false, error, required = false }) => (
   <div>
-    <label className="text-sm font-medium text-gray-700">{label}</label>
+    <label className="text-sm font-medium text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
     <div className="relative mt-1">
       {icon && <div className="absolute left-3 top-1/2 transform -translate-y-1/2">{icon}</div>}
       <input
@@ -259,8 +423,17 @@ const InputField = ({ label, type, value, onChange, placeholder = "", icon }) =>
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full ${icon ? "pl-10" : "pl-4"} pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none`}
+        disabled={disabled}
+        className={`w-full ${icon ? "pl-10" : "pl-4"} pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none ${
+          disabled ? "bg-gray-100 cursor-not-allowed text-gray-500" : ""
+        } ${error ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
       />
+      {error && (
+        <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+          <AlertCircle size={12} />
+          {error}
+        </p>
+      )}
     </div>
   </div>
 );

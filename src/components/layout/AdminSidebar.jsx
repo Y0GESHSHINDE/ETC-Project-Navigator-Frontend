@@ -21,7 +21,7 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     <>
       {/* Overlay for mobile */}
       <div
-        className={`fixed inset-0 z-40 bg-black bg-opacity-30 transition-opacity lg:hidden ${
+        className={`fixed inset-0 z-40  bg-black/20 backdrop-blur-sm bg-opacity-30 transition-opacity lg:hidden ${
           sidebarOpen ? "block" : "hidden"
         }`}
         onClick={() => setSidebarOpen(false)}></div>
@@ -97,10 +97,17 @@ const AdminSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             </Link>
 
             <Link
+              to="/admin/task-list"
+              className="flex items-center gap-2 hover:text-blue-600"
+              onClick={() => setSidebarOpen(false)}>
+              <Group size={20} /> Task List
+            </Link>
+
+            <Link
               to="/admin/task"
               className="flex items-center gap-2 hover:text-blue-600"
               onClick={() => setSidebarOpen(false)}>
-              <Group size={20} /> Task
+              <Group size={20} /> Activate Task
             </Link>
 
             <Link

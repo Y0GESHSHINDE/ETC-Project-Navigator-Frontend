@@ -23,7 +23,7 @@ const StudentSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     <>
       {/* Mobile Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black bg-opacity-30 transition-opacity lg:hidden ${
+        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm bg-opacity-30 transition-opacity lg:hidden ${
           sidebarOpen ? "block" : "hidden"
         }`}
         onClick={() => setSidebarOpen(false)}
