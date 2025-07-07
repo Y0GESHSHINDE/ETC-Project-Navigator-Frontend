@@ -301,40 +301,45 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* <!-- Student Portal Features --> */}
             <FeatureCard
               icon={<BookOpen size={28} />}
-              title="Daily Project Updates"
-              desc="Real-time project tracking, progress monitoring, and milestone management for all department projects."
+              title="Project Submissions"
+              desc="Submit reports (PDF/DOC), view evaluation remarks, and track cumulative marks."
               gradient="from-blue-500 to-cyan-500"
             />
             <FeatureCard
               icon={<Users size={28} />}
-              title="Faculty-Student Hub"
-              desc="Direct communication channel between faculty and students with appointment scheduling and query resolution."
+              title="Guide Coordination"
+              desc="Access assigned guide’s info and communicate for mentorship."
               gradient="from-green-500 to-emerald-500"
             />
-            <FeatureCard
-              icon={<Calendar size={28} />}
-              title="Department Calendar"
-              desc="Unified calendar showing deadlines, meetings, seminars, and important department events."
-              gradient="from-purple-500 to-violet-500"
-            />
+
+            {/* <!-- Faculty Portal Features --> */}
             <FeatureCard
               icon={<Target size={28} />}
-              title="Goal Tracking"
-              desc="Track individual student progress, department objectives, and academic milestones efficiently."
-              gradient="from-pink-500 to-rose-500"
+              title="Evaluation & Feedback"
+              desc="Review submissions, assign marks, and request resubmissions."
+              gradient="from-purple-500 to-violet-500"
             />
+
+            {/* <!-- Admin Dashboard Features --> */}
             <FeatureCard
               icon={<TrendingUp size={28} />}
-              title="Performance Analytics"
-              desc="Comprehensive analytics dashboard showing department performance and student success metrics."
+              title="Progress Analytics"
+              desc="Monitor project statistics, task completion, and export reports."
               gradient="from-orange-500 to-red-500"
             />
             <FeatureCard
               icon={<MessageSquare size={28} />}
-              title="Quick Communication"
-              desc="Instant messaging, announcements, and notification system for urgent department updates."
+              title="Task Management"
+              desc="Activate/deactivate tasks, assign guides, and approve project titles."
+              gradient="from-yellow-500 to-amber-500"
+            />
+            <FeatureCard
+              icon={<BarChart2 size={28} />}
+              title="Progress Dashboard"
+              desc="Monitor department-wide project status, deadlines, and analytics."
               gradient="from-yellow-500 to-amber-500"
             />
           </div>
@@ -349,32 +354,32 @@ export default function LandingPage() {
           <div className="text-center mb-12 lg:mb-20">
             <h2 className="text-3xl lg:text-5xl font-bold mb-4 lg:mb-6">
               <span className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                How It Works Daily
+                Project Workflow
               </span>
             </h2>
             <p className="text-lg lg:text-xl text-slate-400 max-w-2xl mx-auto px-4">
-              Simple workflow for everyday department operations
+              End-to-end management of final-year engineering projects
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 ">
             <ProcessStep
               number="01"
               icon={<LogIn />}
-              title="Daily Check-in"
-              desc="Students and faculty log in to access personalized dashboards with today's tasks and updates."
+              title="Project Setup"
+              desc="Students register projects, admins assign guides, and titles are approved."
             />
             <ProcessStep
               number="02"
               icon={<ClipboardList />}
-              title="Track & Collaborate"
-              desc="Monitor project progress, communicate with team members, and submit daily work updates."
+              title="Submissions & Reviews"
+              desc="Students submit milestones, guides evaluate work, and request revisions."
             />
             <ProcessStep
               number="03"
               icon={<Award />}
-              title="Review & Improve"
-              desc="Faculty provides feedback, students receive guidance, and continuous improvement is tracked."
+              title="Final Evaluation"
+              desc="Faculty grades completed projects, and HOD certifies final results."
             />
           </div>
         </div>
@@ -444,13 +449,15 @@ export default function LandingPage() {
                 streamlined academic management.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="group bg-gradient-to-r from-violet-600 to-purple-600 text-white px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-semibold shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
+                <Link
+                  to={"/login"}
+                  className="group bg-gradient-to-r from-violet-600 to-purple-600 text-white px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-semibold shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                   <Sparkles
                     size={18}
                     className="mr-2 group-hover:rotate-12 transition-transform"
                   />
                   Access Portal Now
-                </button>
+                </Link>
                 <button className="group border-2 border-slate-600 text-slate-300 px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-semibold hover:border-purple-500 hover:text-white transition-all duration-300 flex items-center justify-center">
                   <Clock
                     size={18}
@@ -629,7 +636,7 @@ function FeatureCard({ icon, title, desc, gradient }) {
 // Enhanced Process Step Component
 function ProcessStep({ number, icon, title, desc }) {
   return (
-    <div className="text-center group">
+    <div className="text-center group p-5 bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-xl " >
       <div className="relative mb-6 lg:mb-8">
         <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-r from-violet-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl group-hover:shadow-purple-500/25 transition-all duration-300">
           <span className="text-lg lg:text-2xl font-bold text-white">
