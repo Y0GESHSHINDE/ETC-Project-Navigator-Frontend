@@ -89,7 +89,7 @@ export default function Login() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
               <Zap className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-white mb-2">ETC Project Login</h2>
+            <h2 className="text-3xl font-bold text-white mb-2">Project Navigator </h2>
             <p className="text-blue-200">Welcome back! Please sign in to continue</p>
           </div>
 
